@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.datte.githubprofile.User
 
-@Database(entities = [FavoriteUser::class], version = 1)
+@Database(entities = [User::class], version = 1)
 abstract class FavRoomDatabase : RoomDatabase() {
     abstract fun favoriteUserDao(): FavoriteUserDao
 
@@ -18,7 +19,7 @@ abstract class FavRoomDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(FavRoomDatabase::class.java) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
-                    FavRoomDatabase::class.java, "fav_database")
+                    FavRoomDatabase::class.java, "fav_database").fallbackToDestructiveMigration()
                     .build()
                 }
             }

@@ -1,80 +1,73 @@
 package com.datte.githubprofile.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.datte.githubprofile.User
 import com.datte.githubprofile.adapter.ListUserAdapter
 import com.datte.githubprofile.databinding.FragmentFollowersBinding
 import com.datte.githubprofile.model.DetailViewModel
+import com.datte.githubprofile.ui.activities.DetailActivity
 
 class FollowersFragment : Fragment() {
 
-    private val detailViewModel by viewModels<DetailViewModel>()
-    private var binding: FragmentFollowersBinding? = null
-    private val followersBinding get() = binding!!
-    private var username: String? = null
+    private lateinit var binding: FragmentFollowersBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFollowersBinding.inflate(inflater, container, false)
-        return followersBinding.root
-    }
+        binding = FragmentFollowersBinding.inflate(inflater,container,false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val layoutManager = LinearLayoutManager(context)
+        binding.rvFollowers.layoutManager = layoutManager
+        val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
+        binding.rvFollowers.addItemDecoration(itemDecoration)
 
-        username = arguments?.getString(ARG_USERNAME)
-
-        val layoutManager = LinearLayoutManager(requireActivity())
-        followersBinding.rvFollowers.layoutManager = layoutManager
-
-        val itemDecoration = DividerItemDecoration(requireActivity(), layoutManager.orientation)
-        followersBinding.rvFollowers.addItemDecoration(itemDecoration)
-
-        detailViewModel.getFollowers(username)
-
-        detailViewModel.followersUser.observe(viewLifecycleOwner) { user ->
-            followersBinding.rvFollowers.adapter = showFragmentRecycler(user)
-        }
+        val detailViewModel = ViewModelProvider(requireActivity())[DetailViewModel::class.java]
 
         detailViewModel.isLoadingFollower.observe(viewLifecycleOwner) {
             showLoading(it)
         }
+
+        detailViewModel.followersUser.observe(viewLifecycleOwner) {
+            setUserFollowerData(it)
+        }
+        return binding.root
     }
 
-    private fun showFragmentRecycler(items: List<User>): ListUserAdapter {
-        val listUsers = ArrayList<User>()
-        followersBinding.itemFollowers.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+    private fun setUserFollowerData(user: List<User>) {
+        binding.itemFollowers.visibility = if (user.isEmpty()) View.VISIBLE else View.GONE
+        binding.rvFollowers.apply {
+            binding.rvFollowers.layoutManager = LinearLayoutManager(context)
+            val listUserAdapter = ListUserAdapter(user)
+            binding.rvFollowers.adapter = listUserAdapter
 
-        items.let {
-            listUsers.addAll(it)
+            listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
+                override fun onItemClicked(data: User) {
+                    val intent = Intent(context, DetailActivity::class.java)
+                    intent.putExtra(DetailActivity.EXTRA_USERNAME, data)
+                    startActivity(intent)
+                    activity?.finish()
+
+                }
+            })
+
         }
-
-        return ListUserAdapter(listUsers)
     }
 
     private fun showLoading(isLoading: Boolean) {
         if(isLoading) {
-            followersBinding.progressBarFollower.visibility = View.VISIBLE
+            binding.progressBarFollower.visibility = View.VISIBLE
         } else {
-            followersBinding.progressBarFollower.visibility = View.INVISIBLE
+            binding.progressBarFollower.visibility = View.INVISIBLE
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
-    }
-
-    companion object {
-        const val ARG_USERNAME = "arg_username"
     }
 }

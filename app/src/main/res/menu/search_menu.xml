@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:theme="@style/menuTheme">
 
     <item
         android:id="@+id/search_button"
         android:icon="@drawable/ic_baseline_search_24"
+        android:iconTint="@color/black"
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/favorite_button"
+        android:icon="@drawable/ic_baseline_favorite_24"
+        android:title="@string/favorite"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/setting_button"
+        android:title="@string/setting"
+        app:showAsAction="never" />
+
 
 </menu>

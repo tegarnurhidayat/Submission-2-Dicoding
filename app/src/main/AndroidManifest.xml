@@ -16,7 +16,13 @@
         android:theme="@style/Theme.GithubProfile"
         tools:targetApi="31">
         <activity
-            android:name="com.datte.githubprofile.ui.activities.SplashActivity"
+            android:name=".ui.activities.SettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.FavoriteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,11 +31,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.datte.githubprofile.ui.activities.DetailActivity"
+            android:name=".ui.activities.DetailActivity"
             android:exported="false" />
         <activity
-            android:name="com.datte.githubprofile.ui.activities.MainActivity"
-            android:exported="true"/>
+            android:name=".ui.activities.MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

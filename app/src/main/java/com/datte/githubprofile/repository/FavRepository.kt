@@ -2,8 +2,8 @@ package com.datte.githubprofile.repository
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import com.datte.githubprofile.User
 import com.datte.githubprofile.database.FavRoomDatabase
-import com.datte.githubprofile.database.FavoriteUser
 import com.datte.githubprofile.database.FavoriteUserDao
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -17,17 +17,13 @@ class FavRepository(application: Application) {
         mFavoriteUserDao = db.favoriteUserDao()
     }
 
-    fun getAllFav(): LiveData<List<FavoriteUser>> = mFavoriteUserDao.getAllFavoriteUsers()
+    fun getAllFav(): LiveData<List<User>> = mFavoriteUserDao.getAllFav()
 
-    fun insert(favoriteUser: FavoriteUser) {
-        executorService.execute { mFavoriteUserDao.insert(favoriteUser)}
+    fun insert(user: User) {
+        executorService.execute { mFavoriteUserDao.insert(user)}
     }
 
-    fun delete(favoriteUser: FavoriteUser) {
-        executorService.execute { mFavoriteUserDao.delete(favoriteUser)}
-    }
-
-    fun update(favoriteUser: FavoriteUser) {
-        executorService.execute { mFavoriteUserDao.update(favoriteUser)}
+    fun delete(user: User) {
+        executorService.execute { mFavoriteUserDao.delete(user)}
     }
 }

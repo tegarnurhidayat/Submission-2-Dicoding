@@ -12,5 +12,11 @@
     <string name="following">Following</string>
     <string name="repo">Repository</string>
     <string name="logo_description">Logo GitHubProfile</string>
-    <string name="favorite">Add to Favorite</string>
+    <string name="favorite">Add to favorite</string>
+    <string name="favorite_x">Remove favorite</string>
+    <string name="setting">Setting</string>
+    <string name="delete_fav">is removed from favorite</string>
+    <string name="add_fav">is added to favorite</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="favorite_title">Favorite</string>
 </resources>

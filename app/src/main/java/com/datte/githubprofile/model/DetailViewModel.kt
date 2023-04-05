@@ -1,5 +1,6 @@
 package com.datte.githubprofile.model
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,11 +8,12 @@ import androidx.lifecycle.ViewModel
 import com.datte.githubprofile.DetailUser
 import com.datte.githubprofile.User
 import com.datte.githubprofile.api.ApiConfig
+import com.datte.githubprofile.repository.FavRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DetailViewModel : ViewModel() {
+class DetailViewModel(application: Application) : ViewModel() {
     private val _detailUser = MutableLiveData<DetailUser>()
     val detailUser: LiveData<DetailUser> = _detailUser
 
@@ -30,9 +32,27 @@ class DetailViewModel : ViewModel() {
     private val _isLoadingFollowing = MutableLiveData<Boolean>()
     val isLoadingFollowing: LiveData<Boolean> = _isLoadingFollowing
 
-    fun getUser(input: String?) {
+    private val mFavRepository: FavRepository = FavRepository(application)
+    fun getAllFav(): LiveData<List<User>> = mFavRepository.getAllFav()
+    fun insert (user: User) {
+        mFavRepository.insert(user)
+    }
+
+    fun delete(user: User) {
+        mFavRepository.delete(user)
+    }
+
+    var userlogin: String = ""
+        set(value) {
+            field = value
+            getUser()
+            getFollowing()
+            getFollowers()
+        }
+
+    private fun getUser() {
         _isLoadingDetail.value = true
-        val api = ApiConfig.getApiService().getDetailUser(input)
+        val api = ApiConfig.getApiService().getDetailUser(userlogin)
         api.enqueue(object : Callback<DetailUser> {
             override fun onResponse(call: Call<DetailUser>, response: Response<DetailUser>) {
                 _isLoadingDetail.value = false
@@ -51,9 +71,9 @@ class DetailViewModel : ViewModel() {
         })
     }
 
-    fun getFollowers(input: String?) {
+    private fun getFollowers() {
         _isLoadingFollower.value = true
-        val api = ApiConfig.getApiService().getAllUserFollower(input)
+        val api = ApiConfig.getApiService().getAllUserFollower(userlogin)
         api.enqueue(object : Callback<List<User>> {
             override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
                 _isLoadingFollower.value = false
@@ -71,9 +91,9 @@ class DetailViewModel : ViewModel() {
         })
     }
 
-    fun getFollowing(input: String?) {
+    private fun getFollowing() {
         _isLoadingFollowing.value = true
-        val api = ApiConfig.getApiService().getAllUserFollowing(input)
+        val api = ApiConfig.getApiService().getAllUserFollowing(userlogin)
         api.enqueue(object : Callback<List<User>> {
             override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
                 _isLoadingFollowing.value = false

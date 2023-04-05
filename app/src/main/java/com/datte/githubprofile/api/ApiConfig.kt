@@ -1,8 +1,5 @@
 package com.datte.githubprofile.api
 
-
-
-import android.provider.Contacts.SettingsColumns.KEY
 import com.datte.githubprofile.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

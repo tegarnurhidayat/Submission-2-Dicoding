@@ -1,79 +1,74 @@
 package com.datte.githubprofile.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.datte.githubprofile.User
 import com.datte.githubprofile.adapter.ListUserAdapter
 import com.datte.githubprofile.databinding.FragmentFollowingBinding
 import com.datte.githubprofile.model.DetailViewModel
+import com.datte.githubprofile.ui.activities.DetailActivity
 
 class FollowingFragment : Fragment() {
-    private val detailViewModel by viewModels<DetailViewModel>()
-    private var binding: FragmentFollowingBinding? = null
-    private val followingBinding get() = binding!!
-    private var username: String? = null
+
+    private lateinit var binding: FragmentFollowingBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFollowingBinding.inflate(inflater, container, false)
-        return followingBinding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val layoutManager = LinearLayoutManager(context)
+        binding.rvFollowing.layoutManager = layoutManager
+        val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
+        binding.rvFollowing.addItemDecoration(itemDecoration)
 
-        username = arguments?.getString(ARG_USERNAME)
-
-        val layoutManager = LinearLayoutManager(requireActivity())
-        followingBinding.rvFollowing.layoutManager = layoutManager
-
-        val itemDecoration = DividerItemDecoration(requireActivity(), layoutManager.orientation)
-        followingBinding.rvFollowing.addItemDecoration(itemDecoration)
-
-        detailViewModel.getFollowing(username)
-
-        detailViewModel.followingUser.observe(viewLifecycleOwner) { user ->
-            followingBinding.rvFollowing.adapter = showFragmentRecycler(user)
-        }
+        val detailViewModel = ViewModelProvider(requireActivity())[DetailViewModel::class.java]
 
         detailViewModel.isLoadingFollowing.observe(viewLifecycleOwner) {
             showLoading(it)
         }
-    }
 
-    private fun showFragmentRecycler(items: List<User>): ListUserAdapter {
-        val listUsers = ArrayList<User>()
-        followingBinding.itemFollowing.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
-
-        items.let {
-            listUsers.addAll(it)
+        detailViewModel.followingUser.observe(viewLifecycleOwner) {
+            setUserFollowerData(it)
         }
 
-        return ListUserAdapter(listUsers)
+        return binding.root
+    }
+
+    private fun setUserFollowerData(user: List<User>) {
+        binding.itemFollowing.visibility = if (user.isEmpty()) View.VISIBLE else View.GONE
+        binding.rvFollowing.apply {
+            binding.rvFollowing.layoutManager = LinearLayoutManager(context)
+            val listUserAdapter = ListUserAdapter(user)
+            binding.rvFollowing.adapter = listUserAdapter
+
+            listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
+                override fun onItemClicked(data: User) {
+                    val intent = Intent(context, DetailActivity::class.java)
+                    intent.putExtra(DetailActivity.EXTRA_USERNAME, data)
+                    startActivity(intent)
+                    activity?.finish()
+
+                }
+            })
+
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
         if(isLoading) {
-            followingBinding.progressBarFollowing.visibility = View.VISIBLE
+            binding.progressBarFollowing.visibility = View.VISIBLE
         } else {
-            followingBinding.progressBarFollowing.visibility = View.INVISIBLE
+            binding.progressBarFollowing.visibility = View.INVISIBLE
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
-    }
-
-    companion object {
-        const val ARG_USERNAME = "arg_username"
     }
 }

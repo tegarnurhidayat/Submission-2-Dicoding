@@ -1,21 +1,31 @@
 package com.datte.githubprofile.adapter
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.datte.githubprofile.R
 import com.datte.githubprofile.User
-import com.datte.githubprofile.ui.activities.DetailActivity
 import com.datte.githubprofile.databinding.ItemRowUserBinding
 
 class ListUserAdapter(private val listUser: List<User>) :
     RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
 
-    class ListViewHolder(var binding: ItemRowUserBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    private lateinit var onItemClickCallback: OnItemClickCallback
 
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
+
+    class ListViewHolder(private var binding: ItemRowUserBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: User) {
+            binding.myuser = data
+            binding.executePendingBindings()
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val binding = ItemRowUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,25 +33,27 @@ class ListUserAdapter(private val listUser: List<User>) :
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-       val users = listUser[position]
-
-        holder.apply {
-            binding.apply {
-                tvName.text =users.login
-                Glide.with(itemView.context)
-                    .load(users.avatarUrl)
-                    .error(R.drawable.ic_launcher_foreground)
-                    .fallback(R.drawable.ic_launcher_foreground)
-                    .into(imgAvatar)
-
-                itemView.setOnClickListener {
-                    val intent = Intent(itemView.context, DetailActivity::class.java)
-                    intent.putExtra(DetailActivity.EXTRA_USERNAME, users.login)
-                    itemView.context.startActivity(intent)
-                }
-            }
-        }
+        holder.bind(listUser[position])
+        holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked(listUser[holder.bindingAdapterPosition]) }
     }
 
     override fun getItemCount(): Int = listUser.size
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: User)
+    }
+
+    companion object {
+
+        @JvmStatic
+        @BindingAdapter("setAvatar")
+        fun setAvatar(img_avatar: ImageView, url: String) {
+            Glide.with(img_avatar)
+                .load(url)
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_launcher_foreground)
+                .fallback(R.drawable.ic_launcher_foreground)
+                .into(img_avatar)
+        }
+    }
 }

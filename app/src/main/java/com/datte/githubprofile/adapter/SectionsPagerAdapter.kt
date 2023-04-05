@@ -1,35 +1,20 @@
 package com.datte.githubprofile.adapter
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.datte.githubprofile.fragments.FollowersFragment
 import com.datte.githubprofile.fragments.FollowingFragment
 
-class SectionsPagerAdapter(activity: AppCompatActivity, private val username: String?) :
+class SectionsPagerAdapter(activity: AppCompatActivity) :
     FragmentStateAdapter(activity) {
 
     override fun createFragment(position: Int): Fragment {
         var fragment: Fragment? = null
 
         when (position) {
-            0 -> {
-                fragment = FollowersFragment()
-                username?.let {
-                    (fragment as FollowersFragment).arguments = Bundle().apply {
-                        putString(FollowersFragment.ARG_USERNAME, it)
-                    }
-                }
-            }
-            1 -> {
-                fragment = FollowingFragment()
-                username?.let {
-                    fragment.arguments = Bundle().apply {
-                        putString(FollowingFragment.ARG_USERNAME, it)
-                    }
-                }
-            }
+            0 -> fragment = FollowersFragment()
+            1 -> fragment = FollowingFragment()
         }
         return fragment as Fragment
     }

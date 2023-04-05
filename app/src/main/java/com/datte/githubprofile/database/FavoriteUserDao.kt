@@ -2,18 +2,16 @@ package com.datte.githubprofile.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.datte.githubprofile.User
 
 @Dao
 interface FavoriteUserDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(favoriteUser: FavoriteUser)
-
-    @Update
-    fun update(favoriteUser: FavoriteUser)
+    fun insert(user: User)
 
     @Delete
-    fun delete(favoriteUser: FavoriteUser)
+    fun delete(user: User)
 
-    @Query("SELECT * from favorite_user ORDER BY username ASC")
-    fun getAllFavoriteUsers(): LiveData<List<FavoriteUser>>
+    @Query("SELECT * from User ORDER BY login ASC")
+    fun getAllFav(): LiveData<List<User>>
 }

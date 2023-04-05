@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
     </style>
 
     <style name="recyclerView">
@@ -40,6 +41,9 @@
         <item name="android:textSize">18sp</item>
     </style>
 
-
+    <style name="menuTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:actionOverflowButtonStyle">@color/white</item>
+        <item name="itemTextColor">@color/white</item>
+    </style>
 
 </resources>

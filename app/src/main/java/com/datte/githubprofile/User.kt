@@ -1,5 +1,10 @@
 package com.datte.githubprofile
+import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 
 data class UserResponse(
@@ -12,14 +17,18 @@ data class UserResponse(
     @field:SerializedName("items")
     val items: List<User>
 )
-
+@Entity
+@Parcelize
 data class User(
+    @PrimaryKey
+    @ColumnInfo(name = "login")
     @field:SerializedName("login")
     val login: String,
 
-    @field:SerializedName("avatar_url")
+    @ColumnInfo(name = "avatarUrl")
+    @SerializedName("avatar_url")
     val avatarUrl: String
-)
+) :Parcelable
 
 data class DetailUser(
     @field:SerializedName("login")
